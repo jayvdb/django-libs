@@ -59,8 +59,9 @@ class HTMLToPlainTextTestCase(TestCase):
             """
         )
         expected = (
-            "Text1\nText2\n\n\nText3"
+            "Text1\nText2\n\n\nText3",
+            "Text1\nText2\n\nText3",
         )
         result = html_to_plain_text(html)
-        self.assertEqual(result, expected, msg=(
+        self.assertIn(result, expected, msg=(
             'Should replace <br/> nicely'))
