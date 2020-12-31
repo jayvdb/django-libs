@@ -46,20 +46,22 @@ class HvadFactoryMixin(object):
         # obj.some_translatable_field is actually set although no translation
         # object exists, yet. We have to cache the translatable values ...
         cached_values = {}
-        for field in obj._translated_field_names:
-            if field in ['id', 'master', 'master_id', 'language_code']:
-                continue
-            cached_values[field] = getattr(obj, field)
+        if hasattr(obj, '_translated_field_names'):
+            for field in obj._translated_field_names:
+                if field in ['id', 'master', 'master_id', 'language_code']:
+                    continue
+                cached_values[field] = getattr(obj, field)
 
         # ... because when calling translate, the translatable values will be
         # lost on the obj ...
         obj.translate(obj.language_code)
-        for field in obj._translated_field_names:
-            if field in ['id', 'master', 'master_id', 'language_code']:
-                continue
-            # ... so here we will put them back on the object, this time they
-            # will be saved on the translatable object.
-            setattr(obj, field, cached_values[field])
+        if hasattr(obj, '_translated_field_names'):
+            for field in obj._translated_field_names:
+                if field in ['id', 'master', 'master_id', 'language_code']:
+                    continue
+                # ... so here we will put them back on the object, this time they
+                # will be saved on the translatable object.
+                setattr(obj, field, cached_values[field])
 
         obj.save()
         return obj
